@@ -274,14 +274,15 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
   }
 
   Widget _buildStageColumn(String stage, List<GitLabJob> jobs) {
-    return SizedBox(
-      width: 200,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
+    return IntrinsicWidth(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 180, maxWidth: 300),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12),
@@ -301,7 +302,8 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
             ),
             const SizedBox(height: 8),
             ...jobs.map((job) => _buildJobCard(job)),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -329,8 +331,6 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   IconButton(
