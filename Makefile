@@ -2,7 +2,7 @@
 
 # Variables
 APP_NAME = Labby
-VERSION = 1.0.0
+VERSION = $(shell grep '^version:' pubspec.yaml | cut -d' ' -f2 | cut -d'+' -f1)
 DMG_NAME = $(APP_NAME)-$(VERSION).dmg
 BUILD_DIR = build/macos/Build/Products/Release
 STAGING_DIR = dmg-staging
@@ -27,8 +27,8 @@ dmg: clean-dmg build-macos
 	@rm -rf $(STAGING_DIR)
 
 build-macos:
-	@echo "Building macOS app..."
-	@fvm flutter build macos --release
+	@echo "Building macOS app (version $(VERSION))..."
+	@fvm flutter build macos --release --build-name=$(VERSION)
 
 clean-dmg:
 	@echo "Cleaning previous DMG..."
