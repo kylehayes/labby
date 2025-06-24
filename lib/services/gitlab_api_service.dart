@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/gitlab_project.dart';
 import '../models/gitlab_pipeline.dart';
 import '../models/gitlab_job.dart';
+import '../models/gitlab_merge_request.dart';
 
 class GitLabApiService {
   final String baseUrl;
@@ -151,6 +152,92 @@ class GitLabApiService {
     }
   }
 
+  Future<List<GitLabMergeRequest>> getMergeRequests({
+    String? scope,
+    String? state,
+    int? projectId,
+    List<int>? projectIds,
+    int page = 1,
+    int perPage = 20,
+  }) async {
+    final queryParams = <String, String>{
+      'page': page.toString(),
+      'per_page': perPage.toString(),
+      'order_by': 'updated_at',
+      'sort': 'desc',
+    };
+    
+    if (scope != null) {
+      queryParams['scope'] = scope; // 'created_by_me', 'assigned_to_me', 'all'
+    }
+    
+    if (state != null) {
+      queryParams['state'] = state; // 'opened', 'closed', 'merged', 'all'
+    }
+
+    String endpoint;
+    if (projectId != null) {
+      endpoint = '/projects/$projectId/merge_requests';
+    } else {
+      endpoint = '/merge_requests';
+    }
+
+    final uri = Uri.parse(_buildUrl(endpoint)).replace(
+      queryParameters: queryParams,
+    );
+
+    final response = await _client.get(uri, headers: _headers);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = json.decode(response.body);
+      return jsonList.map((json) => GitLabMergeRequest.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to fetch merge requests: ${response.statusCode} ${response.body}');
+    }
+  }
+
+  Future<List<GitLabMergeRequest>> getMergeRequestsFromWatchedProjects({
+    String? state,
+    List<int> projectIds = const [],
+    int perPage = 20,
+  }) async {
+    if (projectIds.isEmpty) return [];
+
+    final allMergeRequests = <GitLabMergeRequest>[];
+    
+    // Fetch merge requests from each watched project
+    for (final projectId in projectIds) {
+      try {
+        final projectMRs = await getMergeRequests(
+          projectId: projectId,
+          state: state,
+          perPage: perPage,
+        );
+        allMergeRequests.addAll(projectMRs);
+      } catch (e) {
+        // Continue with other projects if one fails
+        continue;
+      }
+    }
+
+    // Sort by updated_at descending
+    allMergeRequests.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    
+    return allMergeRequests;
+  }
+
+  Future<GitLabMergeRequest> getMergeRequest(int projectId, int mergeRequestIid) async {
+    final uri = Uri.parse(_buildUrl('/projects/$projectId/merge_requests/$mergeRequestIid'));
+
+    final response = await _client.get(uri, headers: _headers);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> json = jsonDecode(response.body);
+      return GitLabMergeRequest.fromJson(json);
+    } else {
+      throw Exception('Failed to fetch merge request: ${response.statusCode} ${response.body}');
+    }
+  }
 
   Future<Map<String, dynamic>> testConnection() async {
     try {

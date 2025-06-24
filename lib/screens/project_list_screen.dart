@@ -6,6 +6,7 @@ import '../services/config_service.dart';
 import '../main.dart';
 import 'pipeline_list_screen.dart';
 import 'config_screen.dart';
+import 'merge_requests_screen.dart';
 
 class ProjectListScreen extends StatefulWidget {
   const ProjectListScreen({super.key});
@@ -83,6 +84,12 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
     if (result == true) {
       _initializeApiService();
     }
+  }
+
+  void _navigateToMergeRequests() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const MergeRequestsScreen()),
+    );
   }
 
   Future<void> _logout() async {
@@ -179,6 +186,11 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                 ],
               );
             },
+          ),
+          IconButton(
+            icon: const Icon(Icons.merge_type),
+            onPressed: _navigateToMergeRequests,
+            tooltip: 'Merge Requests',
           ),
           IconButton(
             icon: const Icon(Icons.settings),

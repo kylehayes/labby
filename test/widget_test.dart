@@ -8,13 +8,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:gitlab_pipeline_monitor/main.dart';
+import 'package:labby/main.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   testWidgets('App starts with splash screen', (WidgetTester tester) async {
-    await tester.pumpWidget(const GitLabPipelineMonitorApp());
+    await tester.pumpWidget(
+      ChangeNotifierProvider(
+        create: (context) => ThemeProvider(),
+        child: const LabbyApp(),
+      ),
+    );
 
-    expect(find.text('GitLab Pipeline Monitor'), findsOneWidget);
+    expect(find.text('Labby'), findsOneWidget);
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 }
