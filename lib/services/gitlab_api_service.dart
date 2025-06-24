@@ -138,6 +138,19 @@ class GitLabApiService {
     }
   }
 
+  Future<GitLabJob> retryJob(int projectId, int jobId) async {
+    final uri = Uri.parse(_buildUrl('/projects/$projectId/jobs/$jobId/retry'));
+
+    final response = await _client.post(uri, headers: _headers);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final Map<String, dynamic> json = jsonDecode(response.body);
+      return GitLabJob.fromJson(json);
+    } else {
+      throw Exception('Failed to retry job: ${response.statusCode} ${response.body}');
+    }
+  }
+
 
   Future<Map<String, dynamic>> testConnection() async {
     try {

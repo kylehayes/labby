@@ -155,6 +155,33 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
     }
   }
 
+  Future<void> _retryJob(GitLabJob job) async {
+    try {
+      await widget.apiService.retryJob(widget.project.id, job.id);
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Retrying job: ${job.name}'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        
+        // Refresh to show the updated job status
+        _loadPipelineAndJobs(showLoading: false);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to retry job: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   Future<void> _openJobLogs(GitLabJob job) async {
     try {
       final url = Uri.parse(job.webUrl);
@@ -358,6 +385,26 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.secondary,
                       foregroundColor: Theme.of(context).colorScheme.onSecondary,
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      minimumSize: const Size.fromHeight(28),
+                    ),
+                  ),
+                ),
+              ],
+              if (job.isFailed) ...[
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () => _retryJob(job),
+                    icon: const Icon(Icons.refresh, size: 16),
+                    label: const Text(
+                      'Retry',
+                      style: TextStyle(fontSize: 11),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       minimumSize: const Size.fromHeight(28),
                     ),
