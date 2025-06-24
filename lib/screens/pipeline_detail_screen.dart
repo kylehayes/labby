@@ -155,6 +155,33 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
     }
   }
 
+  Future<void> _openJobLogs(GitLabJob job) async {
+    try {
+      final url = Uri.parse(job.webUrl);
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Could not open job logs in browser'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error opening browser: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   Map<String, List<GitLabJob>> _groupJobsByStage(List<GitLabJob> jobs) {
     final Map<String, List<GitLabJob>> grouped = {};
     final List<String> stageOrder = []; // Track the order stages first appear
@@ -277,6 +304,16 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.description, size: 16),
+                    onPressed: () => _openJobLogs(job),
+                    tooltip: 'View logs',
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(
+                      minWidth: 24,
+                      minHeight: 24,
                     ),
                   ),
                 ],

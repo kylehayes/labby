@@ -138,6 +138,7 @@ class GitLabApiService {
     }
   }
 
+
   Future<Map<String, dynamic>> testConnection() async {
     try {
       final uri = Uri.parse(_buildUrl('/user'));
