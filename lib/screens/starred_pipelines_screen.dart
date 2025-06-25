@@ -233,7 +233,7 @@ class _StarredPipelinesScreenState extends State<StarredPipelinesScreen> {
                               Text(
                                 project.name,
                                 style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
+                                  color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),

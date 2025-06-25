@@ -25,7 +25,7 @@ class _PipelineListScreenState extends State<PipelineListScreen> {
   List<GitLabPipeline> _pipelines = [];
   bool _isLoading = false;
   Timer? _refreshTimer;
-  String _selectedStatus = 'all';
+  String _selectedStatus = 'running';
   Map<int, bool> _starredStatus = {};
 
   final List<String> _statusOptions = [
