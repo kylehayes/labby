@@ -30,7 +30,7 @@ void main() {
       expect(find.text('Labby'), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
       expect(find.byIcon(Icons.account_tree), findsOneWidget);
-      
+
       // Advance past the 1-second delay in _checkConfiguration
       await tester.pump(const Duration(seconds: 1));
       // Allow any pending microtasks to complete
@@ -53,7 +53,7 @@ void main() {
 
       final iconWidget = tester.widget<Icon>(find.byIcon(Icons.account_tree));
       expect(iconWidget.size, 80);
-      
+
       // Advance past the 1-second delay in _checkConfiguration
       await tester.pump(const Duration(seconds: 1));
       // Allow any pending microtasks to complete
