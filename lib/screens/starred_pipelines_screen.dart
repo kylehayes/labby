@@ -28,7 +28,7 @@ class _StarredPipelinesScreenState extends State<StarredPipelinesScreen> {
   Future<void> _initializeApiService() async {
     final url = await ConfigService.getGitLabUrl();
     final token = await ConfigService.getGitLabToken();
-    
+
     if (url != null && token != null) {
       _apiService = GitLabApiService(baseUrl: url, token: token);
       await _loadStarredPipelines();
@@ -54,7 +54,8 @@ class _StarredPipelinesScreenState extends State<StarredPipelinesScreen> {
 
     try {
       final starredKeys = await ConfigService.getStarredPipelines();
-      final starredPipelines = await _apiService!.getStarredPipelines(starredKeys);
+      final starredPipelines =
+          await _apiService!.getStarredPipelines(starredKeys);
 
       if (mounted) {
         setState(() {
@@ -69,7 +70,7 @@ class _StarredPipelinesScreenState extends State<StarredPipelinesScreen> {
           _isLoading = false;
           _isBackgroundRefreshing = false;
         });
-        
+
         if (!isBackgroundRefresh) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -88,15 +89,14 @@ class _StarredPipelinesScreenState extends State<StarredPipelinesScreen> {
         starredPipeline.project.id,
         starredPipeline.pipeline.id,
       );
-      
+
       if (mounted) {
         setState(() {
-          _starredPipelines.removeWhere((sp) => 
-            sp.project.id == starredPipeline.project.id && 
-            sp.pipeline.id == starredPipeline.pipeline.id
-          );
+          _starredPipelines.removeWhere((sp) =>
+              sp.project.id == starredPipeline.project.id &&
+              sp.pipeline.id == starredPipeline.pipeline.id);
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Pipeline removed from favorites'),
@@ -215,7 +215,7 @@ class _StarredPipelinesScreenState extends State<StarredPipelinesScreen> {
                       final starredPipeline = _starredPipelines[index];
                       final pipeline = starredPipeline.pipeline;
                       final project = starredPipeline.project;
-                      
+
                       return Card(
                         margin: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -239,7 +239,8 @@ class _StarredPipelinesScreenState extends State<StarredPipelinesScreen> {
                               ),
                               Text('Branch: ${pipeline.ref}'),
                               Text('Status: ${pipeline.status.toUpperCase()}'),
-                              Text('Updated: ${_formatDateTime(pipeline.updatedAt)}'),
+                              Text(
+                                  'Updated: ${_formatDateTime(pipeline.updatedAt)}'),
                             ],
                           ),
                           trailing: Row(
@@ -257,7 +258,8 @@ class _StarredPipelinesScreenState extends State<StarredPipelinesScreen> {
                                   ? const SizedBox(
                                       width: 20,
                                       height: 20,
-                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2),
                                     )
                                   : const Icon(Icons.arrow_forward_ios),
                             ],

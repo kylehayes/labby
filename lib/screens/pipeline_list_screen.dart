@@ -96,26 +96,25 @@ class _PipelineListScreenState extends State<PipelineListScreen> {
 
   Future<void> _toggleStar(GitLabPipeline pipeline) async {
     final isCurrentlyStarred = _starredStatus[pipeline.id] ?? false;
-    
+
     try {
       if (isCurrentlyStarred) {
-        await ConfigService.removeStarredPipeline(widget.project.id, pipeline.id);
+        await ConfigService.removeStarredPipeline(
+            widget.project.id, pipeline.id);
       } else {
         await ConfigService.addStarredPipeline(widget.project.id, pipeline.id);
       }
-      
+
       if (mounted) {
         setState(() {
           _starredStatus[pipeline.id] = !isCurrentlyStarred;
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              isCurrentlyStarred 
-                ? 'Pipeline removed from favorites' 
-                : 'Pipeline added to favorites'
-            ),
+            content: Text(isCurrentlyStarred
+                ? 'Pipeline removed from favorites'
+                : 'Pipeline added to favorites'),
             duration: const Duration(seconds: 2),
           ),
         );
@@ -131,7 +130,6 @@ class _PipelineListScreenState extends State<PipelineListScreen> {
       }
     }
   }
-
 
   Icon _getStatusIcon(String status) {
     switch (status.toLowerCase()) {
@@ -181,7 +179,8 @@ class _PipelineListScreenState extends State<PipelineListScreen> {
             icon: const Icon(Icons.star),
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const StarredPipelinesScreen()),
+                MaterialPageRoute(
+                    builder: (_) => const StarredPipelinesScreen()),
               );
             },
             tooltip: 'Starred Pipelines',
@@ -246,14 +245,17 @@ class _PipelineListScreenState extends State<PipelineListScreen> {
                                 leading: _getStatusIcon(pipeline.status),
                                 title: Text(
                                   'Pipeline #${pipeline.id}',
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text('Branch: ${pipeline.ref}'),
-                                    Text('Status: ${pipeline.status.toUpperCase()}'),
-                                    Text('Updated: ${_formatDateTime(pipeline.updatedAt)}'),
+                                    Text(
+                                        'Status: ${pipeline.status.toUpperCase()}'),
+                                    Text(
+                                        'Updated: ${_formatDateTime(pipeline.updatedAt)}'),
                                   ],
                                 ),
                                 trailing: Row(
@@ -264,20 +266,23 @@ class _PipelineListScreenState extends State<PipelineListScreen> {
                                         _starredStatus[pipeline.id] == true
                                             ? Icons.star
                                             : Icons.star_border,
-                                        color: _starredStatus[pipeline.id] == true
-                                            ? Colors.amber
-                                            : Colors.grey,
+                                        color:
+                                            _starredStatus[pipeline.id] == true
+                                                ? Colors.amber
+                                                : Colors.grey,
                                       ),
                                       onPressed: () => _toggleStar(pipeline),
-                                      tooltip: _starredStatus[pipeline.id] == true
-                                          ? 'Remove from favorites'
-                                          : 'Add to favorites',
+                                      tooltip:
+                                          _starredStatus[pipeline.id] == true
+                                              ? 'Remove from favorites'
+                                              : 'Add to favorites',
                                     ),
                                     pipeline.isRunning
                                         ? const SizedBox(
                                             width: 20,
                                             height: 20,
-                                            child: CircularProgressIndicator(strokeWidth: 2),
+                                            child: CircularProgressIndicator(
+                                                strokeWidth: 2),
                                           )
                                         : const Icon(Icons.arrow_forward_ios),
                                   ],

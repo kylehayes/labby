@@ -28,7 +28,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
     final url = await ConfigService.getGitLabUrl();
     final token = await ConfigService.getGitLabToken();
     final group = await ConfigService.getGitLabGroup();
-    
+
     if (url != null) _urlController.text = url;
     if (token != null) _tokenController.text = token;
     if (group != null) _groupController.text = group;
@@ -82,7 +82,9 @@ class _ConfigScreenState extends State<ConfigScreen> {
     try {
       await ConfigService.setGitLabUrl(_urlController.text.trim());
       await ConfigService.setGitLabToken(_tokenController.text.trim());
-      await ConfigService.setGitLabGroup(_groupController.text.trim().isEmpty ? null : _groupController.text.trim());
+      await ConfigService.setGitLabGroup(_groupController.text.trim().isEmpty
+          ? null
+          : _groupController.text.trim());
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -91,7 +93,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        
+
         // Navigate to project list screen after saving config
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const ProjectListScreen()),
@@ -157,7 +159,8 @@ class _ConfigScreenState extends State<ConfigScreen> {
                   labelText: 'GitLab Group (Optional)',
                   hintText: 'mycompany/team or group-id',
                   border: OutlineInputBorder(),
-                  helperText: 'Filter projects to a specific group. Leave empty for all projects.',
+                  helperText:
+                      'Filter projects to a specific group. Leave empty for all projects.',
                 ),
                 validator: (value) {
                   // Group is optional, so no validation needed
@@ -201,7 +204,8 @@ class _ConfigScreenState extends State<ConfigScreen> {
                       onPressed: _isLoading ? null : _saveConfiguration,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                        foregroundColor:
+                            Theme.of(context).colorScheme.onPrimary,
                       ),
                       child: _isLoading
                           ? const SizedBox(
@@ -226,15 +230,17 @@ class _ConfigScreenState extends State<ConfigScreen> {
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 8),
-                      Text('1. Go to https://gitlab.com/-/profile/personal_access_tokens'),
+                      Text(
+                          '1. Go to https://gitlab.com/-/profile/personal_access_tokens'),
                       Text('2. Click "Add new token"'),
                       Text('3. Give it a name and select "api" scope'),
                       Text('4. Set expiration date (optional)'),
                       Text('5. Click "Create personal access token"'),
-                      Text('6. Copy the token immediately (you won\'t see it again!)'),
+                      Text(
+                          '6. Copy the token immediately (you won\'t see it again!)'),
                       SizedBox(height: 8),
                       Text('Token format: glpat-xxxxxxxxxxxxxxxxxxxx',
-                           style: TextStyle(fontStyle: FontStyle.italic)),
+                          style: TextStyle(fontStyle: FontStyle.italic)),
                     ],
                   ),
                 ),

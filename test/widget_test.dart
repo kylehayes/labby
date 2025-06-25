@@ -7,20 +7,97 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:labby/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  testWidgets('App starts with splash screen', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      ChangeNotifierProvider(
-        create: (context) => ThemeProvider(),
-        child: const LabbyApp(),
-      ),
-    );
+import 'package:labby/main.dart';
 
-    expect(find.text('Labby'), findsOneWidget);
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+void main() {
+  group('App Integration', () {
+    setUp(() {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    testWidgets('App starts with splash screen', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ChangeNotifierProvider(
+          create: (context) => ThemeProvider(),
+          child: const LabbyApp(),
+        ),
+      );
+
+      expect(find.text('Labby'), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byIcon(Icons.account_tree), findsOneWidget);
+    });
+
+    testWidgets('SplashScreen displays correctly', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ChangeNotifierProvider(
+            create: (context) => ThemeProvider(),
+            child: const SplashScreen(),
+          ),
+        ),
+      );
+
+      expect(find.text('Labby'), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byIcon(Icons.account_tree), findsOneWidget);
+
+      final iconWidget = tester.widget<Icon>(find.byIcon(Icons.account_tree));
+      expect(iconWidget.size, 80);
+    });
+  });
+
+  group('ThemeProvider', () {
+    test('should initialize with system theme', () {
+      final themeProvider = ThemeProvider();
+      expect(themeProvider.themeMode, ThemeMode.system);
+    });
+
+    test('should notify listeners when theme changes', () async {
+      final themeProvider = ThemeProvider();
+      bool notified = false;
+
+      themeProvider.addListener(() {
+        notified = true;
+      });
+
+      await themeProvider.setThemeMode(ThemeMode.dark);
+      expect(notified, isTrue);
+      expect(themeProvider.themeMode, ThemeMode.dark);
+    });
+
+    testWidgets('should apply theme to MaterialApp',
+        (WidgetTester tester) async {
+      final themeProvider = ThemeProvider();
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider.value(
+          value: themeProvider,
+          child: Consumer<ThemeProvider>(
+            builder: (context, provider, child) {
+              return MaterialApp(
+                themeMode: provider.themeMode,
+                theme: ThemeData.light(),
+                darkTheme: ThemeData.dark(),
+                home: const Scaffold(body: Text('Test')),
+              );
+            },
+          ),
+        ),
+      );
+
+      final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
+      expect(materialApp.themeMode, ThemeMode.system);
+
+      await themeProvider.setThemeMode(ThemeMode.dark);
+      await tester.pump();
+
+      final updatedMaterialApp =
+          tester.widget<MaterialApp>(find.byType(MaterialApp));
+      expect(updatedMaterialApp.themeMode, ThemeMode.dark);
+    });
   });
 }
