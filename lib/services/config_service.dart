@@ -7,6 +7,7 @@ class ConfigService {
   static const String _gitlabGroupKey = 'gitlab_group';
   static const String _themeKey = 'theme_mode';
   static const String _watchedProjectsKey = 'watched_projects';
+  static const String _starredPipelinesKey = 'starred_pipelines';
 
   static Future<String?> getGitLabUrl() async {
     final prefs = await SharedPreferences.getInstance();
@@ -88,12 +89,51 @@ class ConfigService {
     await setWatchedProjects(watchedProjects);
   }
 
+  static Future<List<String>> getStarredPipelines() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString(_starredPipelinesKey);
+    if (jsonString != null) {
+      final List<dynamic> jsonList = json.decode(jsonString);
+      return jsonList.cast<String>();
+    }
+    return [];
+  }
+
+  static Future<void> setStarredPipelines(List<String> pipelineKeys) async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = json.encode(pipelineKeys);
+    await prefs.setString(_starredPipelinesKey, jsonString);
+  }
+
+  static Future<void> addStarredPipeline(int projectId, int pipelineId) async {
+    final pipelineKey = '${projectId}_$pipelineId';
+    final starredPipelines = await getStarredPipelines();
+    if (!starredPipelines.contains(pipelineKey)) {
+      starredPipelines.add(pipelineKey);
+      await setStarredPipelines(starredPipelines);
+    }
+  }
+
+  static Future<void> removeStarredPipeline(int projectId, int pipelineId) async {
+    final pipelineKey = '${projectId}_$pipelineId';
+    final starredPipelines = await getStarredPipelines();
+    starredPipelines.remove(pipelineKey);
+    await setStarredPipelines(starredPipelines);
+  }
+
+  static Future<bool> isPipelineStarred(int projectId, int pipelineId) async {
+    final pipelineKey = '${projectId}_$pipelineId';
+    final starredPipelines = await getStarredPipelines();
+    return starredPipelines.contains(pipelineKey);
+  }
+
   static Future<void> clearConfiguration() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_gitlabUrlKey);
     await prefs.remove(_gitlabTokenKey);
     await prefs.remove(_gitlabGroupKey);
     await prefs.remove(_watchedProjectsKey);
+    await prefs.remove(_starredPipelinesKey);
     // Note: Don't clear theme preference on logout
   }
 }

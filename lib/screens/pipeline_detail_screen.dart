@@ -6,6 +6,7 @@ import '../models/gitlab_pipeline.dart';
 import '../models/gitlab_job.dart';
 import '../services/gitlab_api_service.dart';
 import '../services/status_bar_service.dart';
+import 'starred_pipelines_screen.dart';
 
 class PipelineDetailScreen extends StatefulWidget {
   final GitLabProject project;
@@ -434,6 +435,15 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           IconButton(
+            icon: const Icon(Icons.star),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const StarredPipelinesScreen()),
+              );
+            },
+            tooltip: 'Starred Pipelines',
+          ),
+          IconButton(
             icon: const Icon(Icons.open_in_browser),
             onPressed: _openInBrowser,
             tooltip: 'Open in browser',
@@ -449,7 +459,7 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
-            color: Theme.of(context).colorScheme.surfaceVariant,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

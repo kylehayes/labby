@@ -76,7 +76,6 @@ class LabbyApp extends StatelessWidget {
               secondary: const Color(0xFFFF4081), // Hot Pink
               tertiary: const Color(0xFFE040FB), // Bright Purple
               surface: const Color(0xFF0A0A0A), // Deep black
-              background: const Color(0xFF0A0A0A), // Deep black
             ),
             useMaterial3: true,
           ),

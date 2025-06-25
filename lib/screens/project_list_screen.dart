@@ -7,6 +7,7 @@ import '../main.dart';
 import 'pipeline_list_screen.dart';
 import 'config_screen.dart';
 import 'merge_requests_screen.dart';
+import 'starred_pipelines_screen.dart';
 
 class ProjectListScreen extends StatefulWidget {
   const ProjectListScreen({super.key});
@@ -89,6 +90,12 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
   void _navigateToMergeRequests() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => const MergeRequestsScreen()),
+    );
+  }
+
+  void _navigateToStarredPipelines() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const StarredPipelinesScreen()),
     );
   }
 
@@ -191,6 +198,11 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
             icon: const Icon(Icons.merge_type),
             onPressed: _navigateToMergeRequests,
             tooltip: 'Merge Requests',
+          ),
+          IconButton(
+            icon: const Icon(Icons.star),
+            onPressed: _navigateToStarredPipelines,
+            tooltip: 'Starred Pipelines',
           ),
           IconButton(
             icon: const Icon(Icons.settings),

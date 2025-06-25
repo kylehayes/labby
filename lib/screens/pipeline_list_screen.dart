@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../models/gitlab_project.dart';
 import '../models/gitlab_pipeline.dart';
 import '../services/gitlab_api_service.dart';
+import '../services/config_service.dart';
 import 'pipeline_detail_screen.dart';
+import 'starred_pipelines_screen.dart';
 
 class PipelineListScreen extends StatefulWidget {
   final GitLabProject project;
@@ -24,6 +26,7 @@ class _PipelineListScreenState extends State<PipelineListScreen> {
   bool _isLoading = false;
   Timer? _refreshTimer;
   String _selectedStatus = 'all';
+  Map<int, bool> _starredStatus = {};
 
   final List<String> _statusOptions = [
     'all',
@@ -59,6 +62,8 @@ class _PipelineListScreenState extends State<PipelineListScreen> {
         status: _selectedStatus == 'all' ? null : _selectedStatus,
       );
 
+      await _loadStarredStatus(pipelines);
+
       if (mounted) {
         setState(() {
           _pipelines = pipelines;
@@ -71,6 +76,55 @@ class _PipelineListScreenState extends State<PipelineListScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error loading pipelines: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _loadStarredStatus(List<GitLabPipeline> pipelines) async {
+    final Map<int, bool> starredStatus = {};
+    for (final pipeline in pipelines) {
+      starredStatus[pipeline.id] = await ConfigService.isPipelineStarred(
+        widget.project.id,
+        pipeline.id,
+      );
+    }
+    _starredStatus = starredStatus;
+  }
+
+  Future<void> _toggleStar(GitLabPipeline pipeline) async {
+    final isCurrentlyStarred = _starredStatus[pipeline.id] ?? false;
+    
+    try {
+      if (isCurrentlyStarred) {
+        await ConfigService.removeStarredPipeline(widget.project.id, pipeline.id);
+      } else {
+        await ConfigService.addStarredPipeline(widget.project.id, pipeline.id);
+      }
+      
+      if (mounted) {
+        setState(() {
+          _starredStatus[pipeline.id] = !isCurrentlyStarred;
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              isCurrentlyStarred 
+                ? 'Pipeline removed from favorites' 
+                : 'Pipeline added to favorites'
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error updating favorite: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -123,6 +177,15 @@ class _PipelineListScreenState extends State<PipelineListScreen> {
         title: Text(widget.project.name),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.star),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const StarredPipelinesScreen()),
+              );
+            },
+            tooltip: 'Starred Pipelines',
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => _loadPipelines(),
@@ -193,13 +256,32 @@ class _PipelineListScreenState extends State<PipelineListScreen> {
                                     Text('Updated: ${_formatDateTime(pipeline.updatedAt)}'),
                                   ],
                                 ),
-                                trailing: pipeline.isRunning
-                                    ? const SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(strokeWidth: 2),
-                                      )
-                                    : const Icon(Icons.arrow_forward_ios),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        _starredStatus[pipeline.id] == true
+                                            ? Icons.star
+                                            : Icons.star_border,
+                                        color: _starredStatus[pipeline.id] == true
+                                            ? Colors.amber
+                                            : Colors.grey,
+                                      ),
+                                      onPressed: () => _toggleStar(pipeline),
+                                      tooltip: _starredStatus[pipeline.id] == true
+                                          ? 'Remove from favorites'
+                                          : 'Add to favorites',
+                                    ),
+                                    pipeline.isRunning
+                                        ? const SizedBox(
+                                            width: 20,
+                                            height: 20,
+                                            child: CircularProgressIndicator(strokeWidth: 2),
+                                          )
+                                        : const Icon(Icons.arrow_forward_ios),
+                                  ],
+                                ),
                                 onTap: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(

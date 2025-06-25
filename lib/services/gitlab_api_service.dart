@@ -4,6 +4,7 @@ import '../models/gitlab_project.dart';
 import '../models/gitlab_pipeline.dart';
 import '../models/gitlab_job.dart';
 import '../models/gitlab_merge_request.dart';
+import '../models/starred_pipeline.dart';
 
 class GitLabApiService {
   final String baseUrl;
@@ -66,6 +67,19 @@ class GitLabApiService {
       return jsonList.map((json) => GitLabProject.fromJson(json)).toList();
     } else {
       throw Exception('Failed to fetch projects: ${response.statusCode} ${response.body}');
+    }
+  }
+
+  Future<GitLabProject> getProject(int projectId) async {
+    final uri = Uri.parse(_buildUrl('/projects/$projectId'));
+
+    final response = await _client.get(uri, headers: _headers);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> json = jsonDecode(response.body);
+      return GitLabProject.fromJson(json);
+    } else {
+      throw Exception('Failed to fetch project: ${response.statusCode} ${response.body}');
     }
   }
 
@@ -237,6 +251,36 @@ class GitLabApiService {
     } else {
       throw Exception('Failed to fetch merge request: ${response.statusCode} ${response.body}');
     }
+  }
+
+  Future<List<StarredPipeline>> getStarredPipelines(List<String> starredPipelineKeys) async {
+    if (starredPipelineKeys.isEmpty) return [];
+
+    final allStarredPipelines = <StarredPipeline>[];
+    
+    for (final pipelineKey in starredPipelineKeys) {
+      try {
+        final parts = pipelineKey.split('_');
+        if (parts.length != 2) continue;
+        
+        final projectId = int.parse(parts[0]);
+        final pipelineId = int.parse(parts[1]);
+        
+        final pipeline = await getPipeline(projectId, pipelineId);
+        final project = await getProject(projectId);
+        
+        allStarredPipelines.add(StarredPipeline(
+          pipeline: pipeline,
+          project: project,
+        ));
+      } catch (e) {
+        continue;
+      }
+    }
+
+    allStarredPipelines.sort((a, b) => b.pipeline.updatedAt.compareTo(a.pipeline.updatedAt));
+    
+    return allStarredPipelines;
   }
 
   Future<Map<String, dynamic>> testConnection() async {

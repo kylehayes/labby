@@ -17,8 +17,6 @@ class StatusBarService {
   
   static Timer? _updateTimer;
   static PipelineStatus _currentStatus = PipelineStatus.unknown;
-  static String _currentProject = '';
-  static int _currentPipelineId = 0;
 
   static Future<void> initialize() async {
     if (!Platform.isMacOS) return;
@@ -37,9 +35,6 @@ class StatusBarService {
   }) async {
     if (!Platform.isMacOS) return;
 
-    _currentProject = projectName;
-    _currentPipelineId = pipeline.id;
-    
     // Calculate rollup status
     final newStatus = _calculateRollupStatus(pipeline, jobs);
     
