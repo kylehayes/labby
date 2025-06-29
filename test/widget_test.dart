@@ -31,8 +31,8 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
       expect(find.byIcon(Icons.account_tree), findsOneWidget);
 
-      // Only advance a small amount to avoid triggering navigation
-      await tester.pump(const Duration(milliseconds: 100));
+      // Allow some time for initialization but not full navigation
+      await tester.pump(const Duration(milliseconds: 500));
     });
 
     testWidgets('SplashScreen displays correctly', (WidgetTester tester) async {
@@ -52,8 +52,8 @@ void main() {
       final iconWidget = tester.widget<Icon>(find.byIcon(Icons.account_tree));
       expect(iconWidget.size, 80);
 
-      // Only advance a small amount to avoid triggering navigation
-      await tester.pump(const Duration(milliseconds: 100));
+      // Allow some time for initialization but not full navigation
+      await tester.pump(const Duration(milliseconds: 500));
     });
   });
 
