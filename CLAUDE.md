@@ -24,11 +24,30 @@ fvm flutter pub run flutter_launcher_icons  # Regenerate icons
 ```
 
 ### Build System
-Use the Makefile for releases:
+Use the Makefile for releases and development:
 ```bash
+# Release builds
 make dmg          # Build app and create DMG for distribution
 make clean-dmg    # Remove DMG and staging files
 make clean        # Full clean including Flutter build
+
+# Testing
+make test         # Run all tests
+make test-coverage # Run tests with coverage report
+make test-models  # Run only model tests
+make test-services # Run only service tests  
+make test-widgets # Run only widget tests
+
+# Code quality
+make lint         # Analyze code for issues
+make format       # Format code automatically
+make format-check # Check if code is properly formatted
+make codegen      # Generate model serialization code
+
+# Combined workflows
+make check        # Run format check, lint, and tests
+make ci          # Full CI pipeline (codegen + check)
+make help        # Show all available targets
 ```
 
 ### Release Process
@@ -68,9 +87,28 @@ fvm flutter packages pub run build_runner build
 ```
 
 ## Testing & Quality
-- Run tests: `fvm flutter test`
+
+### Running Tests
+- Run all tests: `fvm flutter test`
+- Run tests with coverage: `fvm flutter test --coverage`
+- Run specific test file: `fvm flutter test test/models/gitlab_project_test.dart`
+- Run tests by pattern: `fvm flutter test --name="GitLabProject"`
+
+### Test Structure
+- `test/models/` - Unit tests for data models (JSON serialization, getters, etc.)
+- `test/services/` - Unit tests for business logic services (config, API)
+- `test/widget_test.dart` - Widget tests for UI components and app integration
+- All tests use proper mocking and isolation to avoid external dependencies
+
+### Code Quality
 - Lint code: `fvm flutter analyze`
 - Format code: `dart format .`
+- Generate model code: `fvm flutter packages pub run build_runner build`
+
+### CI/CD Testing
+- GitHub Actions CI runs tests automatically on push/PR to main/develop
+- Tests run on multiple platforms (Linux, macOS, Windows builds)
+- Coverage reports uploaded to Codecov
 
 ## Dependencies Management
 - Keep dependencies updated but test thoroughly

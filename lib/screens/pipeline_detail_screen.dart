@@ -56,7 +56,8 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
       // Load both pipeline status and jobs concurrently
       final futures = await Future.wait([
         widget.apiService.getPipeline(widget.project.id, widget.pipeline.id),
-        widget.apiService.getPipelineJobs(widget.project.id, widget.pipeline.id),
+        widget.apiService
+            .getPipelineJobs(widget.project.id, widget.pipeline.id),
       ]);
 
       final pipeline = futures[0] as GitLabPipeline;
@@ -78,12 +79,13 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
         );
 
         // Stop auto-refresh only if pipeline is complete AND no jobs are running or manual
-        final hasActiveJobs = jobs.any((job) => job.isRunning || job.canBeStarted);
+        final hasActiveJobs =
+            jobs.any((job) => job.isRunning || job.canBeStarted);
         if (!pipeline.isRunning && !hasActiveJobs && _refreshTimer != null) {
           _refreshTimer!.cancel();
           _refreshTimer = null;
         }
-        
+
         // Start auto-refresh if we have active jobs but no timer
         if ((pipeline.isRunning || hasActiveJobs) && _refreshTimer == null) {
           _startAutoRefresh();
@@ -132,7 +134,7 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
   Future<void> _startManualJob(GitLabJob job) async {
     try {
       await widget.apiService.playJob(widget.project.id, job.id);
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -140,7 +142,7 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        
+
         // Refresh to show the updated job status
         _loadPipelineAndJobs(showLoading: false);
       }
@@ -159,7 +161,7 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
   Future<void> _retryJob(GitLabJob job) async {
     try {
       await widget.apiService.retryJob(widget.project.id, job.id);
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -167,7 +169,7 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        
+
         // Refresh to show the updated job status
         _loadPipelineAndJobs(showLoading: false);
       }
@@ -213,7 +215,7 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
   Map<String, List<GitLabJob>> _groupJobsByStage(List<GitLabJob> jobs) {
     final Map<String, List<GitLabJob>> grouped = {};
     final List<String> stageOrder = []; // Track the order stages first appear
-    
+
     for (final job in jobs) {
       if (!grouped.containsKey(job.stage)) {
         grouped[job.stage] = [];
@@ -221,7 +223,7 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
       }
       grouped[job.stage]!.add(job);
     }
-    
+
     // Store the stage order for later use
     _stageOrder = stageOrder;
     return grouped;
@@ -284,25 +286,25 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                stage.toUpperCase(),
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                textAlign: TextAlign.center,
+                child: Text(
+                  stage.toUpperCase(),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            ...jobs.map((job) => _buildJobCard(job)),
+              const SizedBox(height: 8),
+              ...jobs.map((job) => _buildJobCard(job)),
             ],
           ),
         ),
@@ -385,7 +387,8 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.secondary,
-                      foregroundColor: Theme.of(context).colorScheme.onSecondary,
+                      foregroundColor:
+                          Theme.of(context).colorScheme.onSecondary,
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       minimumSize: const Size.fromHeight(28),
                     ),
@@ -438,7 +441,8 @@ class _PipelineDetailScreenState extends State<PipelineDetailScreen> {
             icon: const Icon(Icons.star),
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const StarredPipelinesScreen()),
+                MaterialPageRoute(
+                    builder: (_) => const StarredPipelinesScreen()),
               );
             },
             tooltip: 'Starred Pipelines',

@@ -114,7 +114,8 @@ class ConfigService {
     }
   }
 
-  static Future<void> removeStarredPipeline(int projectId, int pipelineId) async {
+  static Future<void> removeStarredPipeline(
+      int projectId, int pipelineId) async {
     final pipelineKey = '${projectId}_$pipelineId';
     final starredPipelines = await getStarredPipelines();
     starredPipelines.remove(pipelineKey);

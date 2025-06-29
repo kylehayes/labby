@@ -47,7 +47,7 @@ class _MergeRequestsScreenState extends State<MergeRequestsScreen> {
   Future<void> _initializeApiService() async {
     final url = await ConfigService.getGitLabUrl();
     final token = await ConfigService.getGitLabToken();
-    
+
     if (url != null && token != null) {
       _apiService = GitLabApiService(baseUrl: url, token: token);
       _loadMergeRequests();
@@ -82,7 +82,7 @@ class _MergeRequestsScreenState extends State<MergeRequestsScreen> {
 
     try {
       List<GitLabMergeRequest> mergeRequests;
-      
+
       if (_selectedScope == 'watched_projects') {
         // Load merge requests from watched projects
         final watchedProjectIds = await ConfigService.getWatchedProjects();
@@ -97,7 +97,7 @@ class _MergeRequestsScreenState extends State<MergeRequestsScreen> {
           state: _selectedState,
         );
       }
-      
+
       setState(() {
         _mergeRequests = mergeRequests;
       });
@@ -167,8 +167,8 @@ class _MergeRequestsScreenState extends State<MergeRequestsScreen> {
                   Text(
                     '!${mr.iid}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
                 ],
               ),
@@ -176,8 +176,8 @@ class _MergeRequestsScreenState extends State<MergeRequestsScreen> {
               Text(
                 mr.title,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                      fontWeight: FontWeight.w600,
+                    ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -213,9 +213,9 @@ class _MergeRequestsScreenState extends State<MergeRequestsScreen> {
                   Text(
                     '${mr.sourceBranch} → ${mr.targetBranch}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontFamily: 'monospace',
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                          fontFamily: 'monospace',
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
                   const Spacer(),
                   if (mr.hasActivity) ...[
@@ -257,7 +257,7 @@ class _MergeRequestsScreenState extends State<MergeRequestsScreen> {
   Widget _buildStateChip(GitLabMergeRequest mr) {
     Color chipColor;
     IconData icon;
-    
+
     if (mr.isMerged) {
       chipColor = Colors.purple;
       icon = Icons.merge_type;
@@ -379,8 +379,8 @@ class _MergeRequestsScreenState extends State<MergeRequestsScreen> {
                       children: [
                         Icon(
                           Icons.brightness_auto,
-                          color: themeProvider.themeMode == ThemeMode.system 
-                              ? Theme.of(context).colorScheme.primary 
+                          color: themeProvider.themeMode == ThemeMode.system
+                              ? Theme.of(context).colorScheme.primary
                               : null,
                         ),
                         const SizedBox(width: 8),
@@ -394,8 +394,8 @@ class _MergeRequestsScreenState extends State<MergeRequestsScreen> {
                       children: [
                         Icon(
                           Icons.light_mode,
-                          color: themeProvider.themeMode == ThemeMode.light 
-                              ? Theme.of(context).colorScheme.primary 
+                          color: themeProvider.themeMode == ThemeMode.light
+                              ? Theme.of(context).colorScheme.primary
                               : null,
                         ),
                         const SizedBox(width: 8),
@@ -409,8 +409,8 @@ class _MergeRequestsScreenState extends State<MergeRequestsScreen> {
                       children: [
                         Icon(
                           Icons.dark_mode,
-                          color: themeProvider.themeMode == ThemeMode.dark 
-                              ? Theme.of(context).colorScheme.primary 
+                          color: themeProvider.themeMode == ThemeMode.dark
+                              ? Theme.of(context).colorScheme.primary
                               : null,
                         ),
                         const SizedBox(width: 8),
@@ -498,7 +498,8 @@ class _MergeRequestsScreenState extends State<MergeRequestsScreen> {
                         : ListView.builder(
                             itemCount: _mergeRequests.length,
                             itemBuilder: (context, index) {
-                              return _buildMergeRequestCard(_mergeRequests[index]);
+                              return _buildMergeRequestCard(
+                                  _mergeRequests[index]);
                             },
                           ),
                   ),

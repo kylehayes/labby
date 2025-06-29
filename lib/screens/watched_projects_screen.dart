@@ -29,7 +29,7 @@ class _WatchedProjectsScreenState extends State<WatchedProjectsScreen> {
   Future<void> _initializeData() async {
     final url = await ConfigService.getGitLabUrl();
     final token = await ConfigService.getGitLabToken();
-    
+
     if (url != null && token != null) {
       _apiService = GitLabApiService(baseUrl: url, token: token);
       await _loadWatchedProjects();
@@ -72,13 +72,13 @@ class _WatchedProjectsScreenState extends State<WatchedProjectsScreen> {
 
   Future<void> _toggleProjectWatch(GitLabProject project) async {
     final isWatched = _watchedProjectIds.contains(project.id);
-    
+
     if (isWatched) {
       await ConfigService.removeWatchedProject(project.id);
     } else {
       await ConfigService.addWatchedProject(project.id);
     }
-    
+
     await _loadWatchedProjects();
   }
 
@@ -91,17 +91,17 @@ class _WatchedProjectsScreenState extends State<WatchedProjectsScreen> {
 
   Widget _buildProjectTile(GitLabProject project) {
     final isWatched = _watchedProjectIds.contains(project.id);
-    
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: isWatched 
+          backgroundColor: isWatched
               ? Theme.of(context).colorScheme.primary
               : Theme.of(context).colorScheme.surfaceContainerHighest,
           child: Icon(
             isWatched ? Icons.visibility : Icons.visibility_off,
-            color: isWatched 
+            color: isWatched
                 ? Colors.white
                 : Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -109,8 +109,8 @@ class _WatchedProjectsScreenState extends State<WatchedProjectsScreen> {
         title: Text(
           project.name,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: isWatched ? FontWeight.w600 : FontWeight.normal,
-          ),
+                fontWeight: isWatched ? FontWeight.w600 : FontWeight.normal,
+              ),
         ),
         subtitle: project.description?.isNotEmpty == true
             ? Text(
@@ -161,8 +161,8 @@ class _WatchedProjectsScreenState extends State<WatchedProjectsScreen> {
                       children: [
                         Icon(
                           Icons.brightness_auto,
-                          color: themeProvider.themeMode == ThemeMode.system 
-                              ? Theme.of(context).colorScheme.primary 
+                          color: themeProvider.themeMode == ThemeMode.system
+                              ? Theme.of(context).colorScheme.primary
                               : null,
                         ),
                         const SizedBox(width: 8),
@@ -176,8 +176,8 @@ class _WatchedProjectsScreenState extends State<WatchedProjectsScreen> {
                       children: [
                         Icon(
                           Icons.light_mode,
-                          color: themeProvider.themeMode == ThemeMode.light 
-                              ? Theme.of(context).colorScheme.primary 
+                          color: themeProvider.themeMode == ThemeMode.light
+                              ? Theme.of(context).colorScheme.primary
                               : null,
                         ),
                         const SizedBox(width: 8),
@@ -191,8 +191,8 @@ class _WatchedProjectsScreenState extends State<WatchedProjectsScreen> {
                       children: [
                         Icon(
                           Icons.dark_mode,
-                          color: themeProvider.themeMode == ThemeMode.dark 
-                              ? Theme.of(context).colorScheme.primary 
+                          color: themeProvider.themeMode == ThemeMode.dark
+                              ? Theme.of(context).colorScheme.primary
                               : null,
                         ),
                         const SizedBox(width: 8),
@@ -216,8 +216,8 @@ class _WatchedProjectsScreenState extends State<WatchedProjectsScreen> {
                 Text(
                   'Select projects to watch for merge requests. You\'ll see merge requests from these projects in addition to your personal assigned/created MRs.',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
                 const SizedBox(height: 16),
                 TextField(
@@ -235,9 +235,9 @@ class _WatchedProjectsScreenState extends State<WatchedProjectsScreen> {
                   Text(
                     'Watching ${_watchedProjectIds.length} project${_watchedProjectIds.length == 1 ? '' : 's'}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
               ],
             ),

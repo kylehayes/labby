@@ -32,7 +32,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
   Future<void> _initializeApiService() async {
     final url = await ConfigService.getGitLabUrl();
     final token = await ConfigService.getGitLabToken();
-    
+
     if (url != null && token != null) {
       _apiService = GitLabApiService(baseUrl: url, token: token);
       _loadProjects();
@@ -50,7 +50,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
         search: _searchQuery.isEmpty ? null : _searchQuery,
         groupId: groupId,
       );
-      
+
       if (mounted) {
         setState(() {
           _projects = projects;
@@ -81,7 +81,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
     final result = await Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => const ConfigScreen()),
     );
-    
+
     if (result == true) {
       _initializeApiService();
     }
@@ -104,7 +104,8 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout? This will clear all your saved settings.'),
+        content: const Text(
+            'Are you sure you want to logout? This will clear all your saved settings.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -151,8 +152,8 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                       children: [
                         Icon(
                           Icons.brightness_auto,
-                          color: themeProvider.themeMode == ThemeMode.system 
-                              ? Theme.of(context).colorScheme.primary 
+                          color: themeProvider.themeMode == ThemeMode.system
+                              ? Theme.of(context).colorScheme.primary
                               : null,
                         ),
                         const SizedBox(width: 8),
@@ -166,8 +167,8 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                       children: [
                         Icon(
                           Icons.light_mode,
-                          color: themeProvider.themeMode == ThemeMode.light 
-                              ? Theme.of(context).colorScheme.primary 
+                          color: themeProvider.themeMode == ThemeMode.light
+                              ? Theme.of(context).colorScheme.primary
                               : null,
                         ),
                         const SizedBox(width: 8),
@@ -181,8 +182,8 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                       children: [
                         Icon(
                           Icons.dark_mode,
-                          color: themeProvider.themeMode == ThemeMode.dark 
-                              ? Theme.of(context).colorScheme.primary 
+                          color: themeProvider.themeMode == ThemeMode.dark
+                              ? Theme.of(context).colorScheme.primary
                               : null,
                         ),
                         const SizedBox(width: 8),
@@ -255,13 +256,15 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                             child: ListTile(
                               title: Text(
                                 project.name,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
                               ),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(project.nameWithNamespace),
-                                  if (project.description != null && project.description!.isNotEmpty)
+                                  if (project.description != null &&
+                                      project.description!.isNotEmpty)
                                     Text(
                                       project.description!,
                                       maxLines: 2,
@@ -274,8 +277,8 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                               ),
                               leading: CircleAvatar(
                                 child: Text(
-                                  project.name.isNotEmpty 
-                                      ? project.name[0].toUpperCase() 
+                                  project.name.isNotEmpty
+                                      ? project.name[0].toUpperCase()
                                       : '?',
                                 ),
                               ),

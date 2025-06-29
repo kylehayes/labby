@@ -87,7 +87,9 @@ class LabbyApp extends StatelessWidget {
 }
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({super.key, this.skipInitialization = false});
+  
+  final bool skipInitialization;
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -97,22 +99,24 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkConfiguration();
+    if (!widget.skipInitialization) {
+      _checkConfiguration();
+    }
   }
 
   Future<void> _checkConfiguration() async {
     // Initialize status bar service
     await StatusBarService.initialize();
-    
+
     // Load theme preference first
     if (mounted) {
       await Provider.of<ThemeProvider>(context, listen: false).loadThemeMode();
     }
-    
+
     await Future.delayed(const Duration(seconds: 1));
-    
+
     final hasConfig = await ConfigService.hasConfiguration();
-    
+
     if (mounted) {
       if (hasConfig) {
         Navigator.of(context).pushReplacement(
@@ -142,8 +146,8 @@ class _SplashScreenState extends State<SplashScreen> {
             Text(
               'Labby',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 32),
             const CircularProgressIndicator(),
