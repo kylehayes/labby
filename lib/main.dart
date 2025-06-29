@@ -87,7 +87,9 @@ class LabbyApp extends StatelessWidget {
 }
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({super.key, this.skipInitialization = false});
+  
+  final bool skipInitialization;
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -97,7 +99,9 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkConfiguration();
+    if (!widget.skipInitialization) {
+      _checkConfiguration();
+    }
   }
 
   Future<void> _checkConfiguration() async {
