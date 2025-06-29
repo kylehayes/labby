@@ -26,13 +26,13 @@ void main() {
         ),
       );
 
-      // Verify initial splash screen elements
+      // Verify initial splash screen elements are immediately visible
       expect(find.text('Labby'), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
       expect(find.byIcon(Icons.account_tree), findsOneWidget);
 
-      // Allow some time for initialization but not full navigation
-      await tester.pump(const Duration(milliseconds: 500));
+      // Just pump once to complete the initial frame render
+      await tester.pump();
     });
 
     testWidgets('SplashScreen displays correctly', (WidgetTester tester) async {
@@ -52,8 +52,8 @@ void main() {
       final iconWidget = tester.widget<Icon>(find.byIcon(Icons.account_tree));
       expect(iconWidget.size, 80);
 
-      // Allow some time for initialization but not full navigation
-      await tester.pump(const Duration(milliseconds: 500));
+      // Just pump once to complete the initial frame render
+      await tester.pump();
     });
   });
 
